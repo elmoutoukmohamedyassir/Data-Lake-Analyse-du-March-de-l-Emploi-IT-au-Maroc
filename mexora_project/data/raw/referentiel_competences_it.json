@@ -1,0 +1,260 @@
+{
+  "familles": {
+    "langages": {
+      "python": [
+        "python",
+        "python3",
+        "py",
+        "python 3"
+      ],
+      "javascript": [
+        "javascript",
+        "js",
+        "node.js",
+        "nodejs",
+        "node",
+        "typescript",
+        "ts"
+      ],
+      "java": [
+        "java",
+        "java8",
+        "java11",
+        "java17",
+        "java ee"
+      ],
+      "sql": [
+        "sql",
+        "mysql",
+        "postgresql",
+        "postgres",
+        "oracle",
+        "tsql",
+        "pl/sql"
+      ],
+      "r": [
+        "r",
+        "rlang",
+        "r-studio",
+        "rstudio"
+      ],
+      "scala": [
+        "scala"
+      ],
+      "go": [
+        "golang",
+        "go"
+      ],
+      "php": [
+        "php",
+        "php7",
+        "php8"
+      ],
+      "swift": [
+        "swift"
+      ],
+      "kotlin": [
+        "kotlin"
+      ]
+    },
+    "frameworks_web": {
+      "react": [
+        "react",
+        "reactjs",
+        "react.js",
+        "react native"
+      ],
+      "angular": [
+        "angular",
+        "angularjs",
+        "angular2"
+      ],
+      "django": [
+        "django",
+        "django rest"
+      ],
+      "spring": [
+        "spring",
+        "spring boot",
+        "springboot"
+      ],
+      "vue": [
+        "vue",
+        "vuejs",
+        "vue.js"
+      ],
+      "flutter": [
+        "flutter",
+        "dart"
+      ],
+      "express": [
+        "express",
+        "expressjs"
+      ],
+      "laravel": [
+        "laravel"
+      ]
+    },
+    "data_engineering": {
+      "spark": [
+        "spark",
+        "apache spark",
+        "pyspark"
+      ],
+      "kafka": [
+        "kafka",
+        "apache kafka"
+      ],
+      "airflow": [
+        "airflow",
+        "apache airflow"
+      ],
+      "dbt": [
+        "dbt",
+        "data build tool"
+      ],
+      "hadoop": [
+        "hadoop",
+        "hdfs",
+        "mapreduce"
+      ],
+      "hive": [
+        "hive",
+        "hiveql"
+      ],
+      "flink": [
+        "flink",
+        "apache flink"
+      ],
+      "nifi": [
+        "nifi",
+        "apache nifi"
+      ]
+    },
+    "cloud": {
+      "aws": [
+        "aws",
+        "amazon web services",
+        "ec2",
+        "s3",
+        "lambda",
+        "redshift"
+      ],
+      "gcp": [
+        "gcp",
+        "google cloud",
+        "bigquery",
+        "cloud storage"
+      ],
+      "azure": [
+        "azure",
+        "microsoft azure",
+        "synapse",
+        "azure devops"
+      ]
+    },
+    "bi_analytics": {
+      "power_bi": [
+        "power bi",
+        "powerbi",
+        "pbi",
+        "dax"
+      ],
+      "tableau": [
+        "tableau",
+        "tableau desktop"
+      ],
+      "metabase": [
+        "metabase"
+      ],
+      "looker": [
+        "looker",
+        "looker studio"
+      ],
+      "excel": [
+        "excel",
+        "vba"
+      ]
+    },
+    "devops_infra": {
+      "docker": [
+        "docker",
+        "dockerfile",
+        "docker-compose"
+      ],
+      "kubernetes": [
+        "kubernetes",
+        "k8s",
+        "kubectl"
+      ],
+      "terraform": [
+        "terraform"
+      ],
+      "jenkins": [
+        "jenkins",
+        "ci/cd",
+        "cicd"
+      ],
+      "ansible": [
+        "ansible"
+      ],
+      "linux": [
+        "linux",
+        "ubuntu",
+        "centos",
+        "bash",
+        "shell"
+      ],
+      "git": [
+        "git",
+        "github",
+        "gitlab",
+        "bitbucket"
+      ]
+    },
+    "ml_ai": {
+      "tensorflow": [
+        "tensorflow",
+        "tf"
+      ],
+      "pytorch": [
+        "pytorch",
+        "torch"
+      ],
+      "scikit": [
+        "scikit-learn",
+        "sklearn",
+        "scikit"
+      ],
+      "keras": [
+        "keras"
+      ],
+      "nlp": [
+        "nlp",
+        "spacy",
+        "nltk",
+        "transformers",
+        "bert"
+      ]
+    },
+    "methodologies": {
+      "agile": [
+        "agile",
+        "scrum",
+        "kanban",
+        "sprint"
+      ],
+      "api_rest": [
+        "api rest",
+        "rest api",
+        "restful",
+        "graphql"
+      ],
+      "microservices": [
+        "microservices",
+        "microservice",
+        "soa"
+      ]
+    }
+  }
+}

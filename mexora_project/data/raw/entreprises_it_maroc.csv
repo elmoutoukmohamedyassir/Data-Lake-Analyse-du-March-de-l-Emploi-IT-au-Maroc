@@ -1,0 +1,41 @@
+nom_entreprise,secteur,taille,ville_siege,site_web,type
+OCP Group,Industrie,Grande Entreprise,Casablanca,www.ocpgroup.ma,Industrie
+Maroc Telecom,Telecom,Grande Entreprise,Rabat,www.maroctelecom.ma,Telecom
+Attijariwafa Bank,Banque,Grande Entreprise,Casablanca,www.attijariwafaban.ma,Banque
+BMCE Bank,Banque,Grande Entreprise,Casablanca,www.bmcebank.ma,Banque
+CIH Bank,Banque,Grande Entreprise,Casablanca,www.cihbank.ma,Banque
+Banque Populaire,Banque,Grande Entreprise,Casablanca,www.banquepopulaire.ma,Banque
+Inwi,Telecom,Grande Entreprise,Casablanca,www.inwi.ma,Telecom
+Orange Maroc,Telecom,Grande Entreprise,Casablanca,www.orangemaroc.ma,Telecom
+Capgemini Maroc,SSII,ETI,Casablanca,www.capgeminimaroc.ma,SSII
+CGI Maroc,SSII,ETI,Casablanca,www.cgimaroc.ma,SSII
+IBM Maroc,SSII,ETI,Casablanca,www.ibmmaroc.ma,SSII
+HPS,Produit,ETI,Casablanca,www.hps.ma,Produit
+Viasur IT,SSII,PME,Casablanca,www.viasurit.ma,SSII
+WafaCash,Banque,ETI,Casablanca,www.wafacash.ma,Banque
+Société Générale Maroc,Banque,Grande Entreprise,Casablanca,www.sociétégénérale.ma,Banque
+TechMaroc SARL,SSII,PME,Casablanca,www.techmarocsarl.ma,SSII
+Intelcia,Conseil,ETI,Casablanca,www.intelcia.ma,Conseil
+Lydec,Autre,Grande Entreprise,Casablanca,www.lydec.ma,Autre
+ONCF,Autre,Grande Entreprise,Rabat,www.oncf.ma,Autre
+DataTech Rabat,SSII,PME,Rabat,www.datatechrabat.ma,SSII
+Webhelp Maroc,Conseil,ETI,Rabat,www.webhelpmaroc.ma,Conseil
+Teleperformance Maroc,SSII,ETI,Rabat,www.teleperformance.ma,SSII
+Tanger Free Zone Corp,Autre,ETI,Tanger,www.tangerfreezonec.ma,Autre
+TechTanger Solutions,SSII,PME,Tanger,www.techtangersolut.ma,SSII
+MedTech Tanger,Produit,Startup,Tanger,www.medtechtanger.ma,Produit
+Renault Tanger,Autre,Grande Entreprise,Tanger,www.renaulttanger.ma,Autre
+Delphi Technologies,Autre,Grande Entreprise,Tanger,www.delphitechnolog.ma,Autre
+NorthData Tanger,SSII,Startup,Tanger,www.northdatatanger.ma,SSII
+Mexora,Produit,PME,Tanger,www.mexora.ma,Produit
+Jumia Maroc,Produit,Startup,Casablanca,www.jumiamaroc.ma,Produit
+Hmizate,Produit,Startup,Casablanca,www.hmizate.ma,Produit
+Avito Maroc,Produit,ETI,Casablanca,www.avitomaroc.ma,Produit
+Lagoon Digital,SSII,PME,Marrakech,www.lagoondigital.ma,SSII
+Marrakech Data,SSII,Startup,Marrakech,www.marrakechdata.ma,SSII
+AxaDev Fès,SSII,PME,Fès,www.axadevfès.ma,SSII
+Fès Digital Hub,SSII,Startup,Fès,www.fèsdigitalhub.ma,SSII
+DataAgadir,SSII,PME,Agadir,www.dataagadir.ma,SSII
+SouthTech,Produit,Startup,Agadir,www.southtech.ma,Produit
+OrientalSoft,SSII,PME,Oujda,www.orientalsoft.ma,SSII
+NordNet Tétouan,SSII,PME,Tétouan,www.nordnettétouan.ma,SSII
