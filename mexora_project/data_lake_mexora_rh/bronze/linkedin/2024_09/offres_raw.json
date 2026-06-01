@@ -1,7 +1,7 @@
 {
   "metadata": {
     "source_fichier": "data/raw/offres_emploi_it_maroc.json",
-    "date_ingestion": "2026-06-01T10:06:25.475281",
+    "date_ingestion": "2026-06-01T10:59:02.003838",
     "partition": "linkedin/2024_09",
     "nb_offres": 52,
     "schema_version": "1.0"
