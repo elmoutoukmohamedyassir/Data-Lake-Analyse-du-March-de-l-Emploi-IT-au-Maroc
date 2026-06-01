@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mexora_project.pipeline.utils import normaliser_ville, normaliser_contrat, valider_dates
+from pipeline.utils import normaliser_ville, normaliser_contrat, valider_dates
 
 
 # ─────────────────────────────────────────────────────────────────────────────
