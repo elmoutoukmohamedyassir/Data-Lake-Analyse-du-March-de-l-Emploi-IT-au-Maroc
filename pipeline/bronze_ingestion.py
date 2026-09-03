@@ -65,12 +65,33 @@ def ingerer_bronze(filepath_source: str, data_lake_root: str) -> dict:
             partitions[cle] = []
         partitions[cle].append(offre)
 
-    # ── Écriture dans Bronze (données BRUTES, non modifiées) ─────────────
+    # ── Écriture dans Bronze (INCRÉMENTALE et IDEMPOTENTE) ────────────────
+    # Principe : on fusionne avec les offres déjà présentes dans la partition
+    # (si le fichier existe déjà) en dédupliquant sur id_offre. Ainsi :
+    #   - relancer l'ingestion avec le même fichier source ne crée pas de
+    #     doublons (idempotence) ;
+    #   - ingérer un nouveau batch avec des offres additionnelles les ajoute
+    #     sans écraser les offres déjà ingérées (incrémental).
     for partition, offres_partition in partitions.items():
         chemin_dir = os.path.join(data_lake_root, "bronze", partition)
         os.makedirs(chemin_dir, exist_ok=True)
 
         chemin_fichier = os.path.join(chemin_dir, "offres_raw.json")
+
+        offres_existantes = []
+        if os.path.exists(chemin_fichier):
+            with open(chemin_fichier, "r", encoding="utf-8") as f:
+                offres_existantes = json.load(f).get("offres", [])
+
+        # Fusion par id_offre : les nouvelles valeurs remplacent les anciennes
+        # en cas de même id (mise à jour), les nouveaux id sont ajoutés.
+        offres_par_id = {o.get("id_offre"): o for o in offres_existantes}
+        for offre in offres_partition:
+            offres_par_id[offre.get("id_offre")] = offre
+
+        offres_fusionnees = list(offres_par_id.values())
+        nb_ajoutees = len(offres_fusionnees) - len(offres_existantes)
+
         with open(chemin_fichier, "w", encoding="utf-8") as f:
             json.dump(
                 {
@@ -78,15 +99,19 @@ def ingerer_bronze(filepath_source: str, data_lake_root: str) -> dict:
                         "source_fichier":  filepath_source,
                         "date_ingestion":  datetime.now().isoformat(),
                         "partition":       partition,
-                        "nb_offres":       len(offres_partition),
+                        "nb_offres":       len(offres_fusionnees),
                         "schema_version":  "1.0",
                     },
-                    "offres": offres_partition,   # ← AUCUNE modification
+                    "offres": offres_fusionnees,
                 },
                 f,
                 ensure_ascii=False,
                 indent=2,
             )
+
+        print(f"[BRONZE] Partition {partition} : {len(offres_existantes)} existantes "
+              f"+ {len(offres_partition)} reçues → {len(offres_fusionnees)} au total "
+              f"({nb_ajoutees:+d})")
 
         stats["nb_fichiers"] += 1
         source_nom = partition.split("/")[0]

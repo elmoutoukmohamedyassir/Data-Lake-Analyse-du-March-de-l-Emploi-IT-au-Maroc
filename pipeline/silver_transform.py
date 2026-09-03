@@ -71,13 +71,13 @@ def nettoyer_titres_postes(df: pd.DataFrame) -> pd.DataFrame:
             "Data Engineer",
         r"etl\s*(dev|developer|engineer)|pipeline\s*(dev|engineer)|ingénieur\s+etl":
             "Data Engineer",
-        r"big\s*data\s*(eng|engineer|dev)":
+        r"big\s*data\s*(eng|engineer|dev)|ingénieur\s+big\s*data|ingenieur\s+big\s*data":
             "Data Engineer",
 
         # Data Analysis / BI
         r"data\s*anal(yst|yste|ytics)|analyste?\s*data|bi\s*anal":
             "Data Analyst",
-        r"business\s*intel(ligence)?|ingénieur\s*bi|développeur\s*bi|dev(eloppeur)?\s*bi":
+        r"business\s*intel(ligence)?|ingénieur\s*bi\b|développeur\s*bi\b|dev(eloppeur)?\s*bi\b":
             "Data Analyst",
         r"reporting\s*(anal|spec|officer)":
             "Data Analyst",
