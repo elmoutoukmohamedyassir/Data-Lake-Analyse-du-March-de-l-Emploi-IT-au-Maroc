@@ -69,6 +69,20 @@ def run_silver():
     return df_clean, df_comp
 
 
+def run_data_quality():
+    from data_quality.validate_silver import valider_offres_silver
+    print("\n" + "█" * 60)
+    print("█  ÉTAPE 2c — DATA QUALITY : Validation Silver (Great Expectations)")
+    print("█" * 60)
+    ok = valider_offres_silver(DATA_LAKE_ROOT)
+    if not ok:
+        raise RuntimeError(
+            "[DATA QUALITY] Échec de la validation Silver — pipeline arrêté "
+            "avant de propager des données non conformes vers Gold."
+        )
+    return ok
+
+
 def run_gold():
     from pipeline.gold_aggregation import construire_gold
     print("\n" + "█" * 60)
@@ -88,6 +102,7 @@ def run_all():
     t_start = time.time()
     run_bronze()
     run_silver()
+    run_data_quality()
     run_gold()
     total = time.time() - t_start
 
@@ -114,6 +129,8 @@ if __name__ == "__main__":
         run_bronze()
     elif etape == "silver":
         run_silver()
+    elif etape == "quality":
+        run_data_quality()
     elif etape == "gold":
         run_gold()
     elif etape == "all":

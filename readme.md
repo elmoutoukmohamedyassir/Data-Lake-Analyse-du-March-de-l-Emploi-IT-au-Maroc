@@ -201,6 +201,6 @@ JSON brut (scraping)
 
 Projet réalisé par :
       EL-Moutouk Mohamed Yassir
-      Abarra SaadEddine
+      
  
 Mexora RH 
