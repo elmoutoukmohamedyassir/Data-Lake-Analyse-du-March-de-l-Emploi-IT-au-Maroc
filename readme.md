@@ -1,7 +1,7 @@
 # Mexora RH Intelligence — Data Lake Emploi IT Maroc
 
-> **Mini-projet 2 | Analyse du marché de l'emploi IT marocain**  
-> Pipeline Bronze → Silver → Gold sur 5 000 offres d'emploi (2023–2024)
+> **Mini-projet 2 | Analyse du marché de l'emploi IT marocain**
+> Pipeline Bronze → Silver → Gold, orchestré par Airflow, avec contrôle qualité, tests et containerisation — sur 5 000 offres d'emploi (2023–2024)
 
 ---
 
@@ -13,8 +13,12 @@ Ce projet construit un **Data Lake en trois zones** (Bronze / Silver / Gold) ali
 - Ingère ~5 000 offres brutes et les partitionne par source et par mois (Bronze)
 - Nettoie les données : villes, salaires, titres de postes, expérience, contrats (Silver)
 - Extrait les compétences IT depuis le texte libre via matching regex (Silver NLP)
+- **Valide la qualité des données Silver avec Great Expectations avant d'autoriser le passage en Gold**
 - Calcule des agrégats analytiques : top compétences, salaires, tendances (Gold)
 - Produit 5 analyses DuckDB avec visualisations et recommandations RH
+- **S'orchestre automatiquement avec Airflow** (dépendances entre tâches, retries, planification quotidienne)
+- **Tourne en conteneurs Docker**, avec Postgres comme backend Airflow
+- Est couvert par une **suite de tests pytest** sur les couches Bronze/Silver
 
 ---
 
@@ -28,8 +32,17 @@ mexora_project/
 │   ├── silver_nlp.py            # Extraction de compétences depuis texte libre
 │   ├── gold_aggregation.py      # Calcul des agrégats → Gold (DuckDB)
 │   └── utils.py                 # Fonctions partagées (normalisation villes, etc.)
+├── data_quality/
+│   └── validate_silver.py       # Contrôle qualité Silver (Great Expectations) — porte avant Gold
+├── dags/
+│   └── mexora_pipeline_dag.py   # DAG Airflow : bronze >> silver >> data_quality >> gold
+├── tests/
+│   ├── test_bronze_ingestion.py
+│   ├── test_silver_transform.py
+│   └── test_utils.py
 ├── analysis/
-│   ├── analyse_marche.py        # 5 questions analytiques DuckDB
+│   ├── analyse_marche_it_maroc.ipynb  # Notebook — 5 questions analytiques + interprétations
+│   ├── analyse_marche.py        # 5 questions analytiques DuckDB (version script)
 │   └── dashboard.py             # Génération du dashboard (4 visualisations)
 ├── data/
 │   └── raw/
@@ -51,9 +64,12 @@ mexora_project/
 │       ├── entreprises_recruteurs.parquet
 │       └── tendances_mensuelles.parquet
 ├── generate_data.py             # Génération du jeu de données synthétiques
-├── main.py                      # Orchestrateur du pipeline complet
+├── main.py                      # Orchestrateur CLI (bronze / silver / gold / all)
 ├── rapport_pipeline.md          # Rapport détaillé des transformations
-└── requirement.txt              # Dépendances Python
+├── Dockerfile                   # Image du pipeline
+├── docker-compose.yml           # Stack complète : Postgres + Airflow webserver/scheduler
+├── pytest.ini                   # Config des tests
+└── requirements.txt              # Dépendances Python
 ```
 
 ---
@@ -61,29 +77,34 @@ mexora_project/
 ## Prérequis
 
 - **Python 3.11+**
-- Les dépendances listées dans `requirement.txt`
+- Les dépendances listées dans `requirements.txt`
 
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 Dépendances principales :
 
-| Package     | Usage                                  |
-|-------------|----------------------------------------|
-| pandas      | Manipulation des DataFrames            |
-| pyarrow     | Lecture/écriture Parquet               |
-| duckdb      | Requêtes SQL analytiques sur Parquet   |
-| matplotlib  | Visualisations                         |
-| seaborn     | Visualisations statistiques            |
-| plotly      | Visualisations interactives (option)   |
-| jupyter     | Notebook d'analyse                     |
+| Package             | Usage                                          |
+|----------------------|-------------------------------------------------|
+| pandas               | Manipulation des DataFrames                    |
+| pyarrow              | Lecture/écriture Parquet                       |
+| duckdb               | Requêtes SQL analytiques sur Parquet           |
+| matplotlib / seaborn | Visualisations                                 |
+| plotly               | Visualisations interactives (option)           |
+| jupyter              | Notebook d'analyse                             |
+| pytest               | Tests unitaires                                |
+| great-expectations   | Validation qualité de la couche Silver         |
+| apache-airflow       | Orchestration du pipeline (DAG)                |
+| psycopg2-binary      | Connecteur Postgres pour le backend Airflow    |
 
 ---
 
 ## Reproduire le pipeline complet
 
-### Étape 0 — Générer les données
+### Option A — En local (sans Airflow)
+
+**Étape 0 — Générer les données**
 
 Les données brutes ne sont pas committées dans le repo (taille). Pour les générer :
 
@@ -94,37 +115,50 @@ python generate_data.py
 
 Cela crée `data/raw/offres_emploi_it_maroc.json` avec 5 000 offres réalistes, incluant intentionnellement les problèmes de qualité décrits dans l'énoncé (villes mal orthographiées, salaires en formats mixtes, titres non standardisés, etc.).
 
-### Étape 1 — Lancer le pipeline complet
+**Étape 1 — Lancer le pipeline complet**
 
 ```bash
-cd mexora_project
-python main.py
+python main.py            # pipeline complet : bronze → silver → data_quality → gold
+python main.py bronze     # ingestion Bronze seulement
+python main.py silver     # Silver (nettoyage + NLP) seulement
+python main.py gold       # Gold seulement
 ```
 
-Ce script orchestre les 4 étapes dans l'ordre :
-
-1. **Bronze** : ingestion brute, partitionnement par source/mois
-2. **Silver transform** : nettoyage, normalisation, typage
-3. **Silver NLP** : extraction des compétences depuis le texte
-4. **Gold** : calcul des agrégats via DuckDB
+Le contrôle qualité (`data_quality/validate_silver.py`) s'exécute automatiquement entre Silver et Gold : si une règle critique échoue (doublons d'`id_offre`, salaire hors fourchette, profil inconnu...), le pipeline s'arrête et Gold n'est pas lancé.
 
 Durée approximative : **10–15 secondes** pour 5 000 offres.
 
-### Étape 2 — Lancer les analyses DuckDB
+**Étape 2 — Lancer les analyses DuckDB**
 
 ```bash
-python mexora_project/analysis/analyse_marche.py
+python analysis/analyse_marche.py
 ```
 
-Affiche les résultats des 5 questions analytiques dans le terminal avec les interprétations métier.
-
-### Étape 3 — Générer le dashboard
+**Étape 3 — Générer le dashboard**
 
 ```bash
-python mexora_project/analysis/dashboard.py
+python analysis/dashboard.py
 ```
 
 Génère les 4 visualisations dans le répertoire `outputs/dashboard/`.
+
+**Étape 4 — Lancer les tests**
+
+```bash
+pytest
+```
+
+### Option B — Avec Airflow (via Docker)
+
+Le DAG `mexora_rh_pipeline` orchestre les mêmes étapes en tâches séparées avec dépendances explicites et retries automatiques :
+
+```bash
+docker compose up -d
+```
+
+- Airflow webserver disponible sur `http://localhost:8080` (utilisateur `admin` / mot de passe `admin`)
+- Le DAG `mexora_rh_pipeline` est planifié quotidiennement (`@daily`) : `bronze_ingestion >> silver_transform >> data_quality_check >> gold_aggregation`
+- Si `data_quality_check` échoue, `gold_aggregation` ne se déclenche pas — la porte de qualité est appliquée aussi en orchestration
 
 ---
 
@@ -145,6 +179,14 @@ Mapping regex `IGNORECASE` : `"casa"`, `"CASABLANCA"`, `"Casablanca-Anfa"` → `
 
 ### Extraction de compétences (NLP)
 Word-boundary regex (`\b{alias}\b`) sur la concaténation de `competences_brut` + `description`. Les aliases sont triés par longueur décroissante pour éviter les faux positifs (`"node"` ne matche pas avant `"node.js"`).
+
+### Contrôle qualité (Great Expectations)
+Avant que Gold ne consomme les données Silver, `data_quality/validate_silver.py` vérifie :
+- `id_offre` et `titre_poste` non nuls, `id_offre` unique
+- Les salaires connus respectent la fourchette `[3 000, 100 000]` MAD
+- `profil_normalise` appartient à la liste des 14 profils valides
+
+Si une vérification échoue, le pipeline s'arrête avant Gold — évite de propager des données corrompues en aval.
 
 ---
 
@@ -176,6 +218,9 @@ JSON brut (scraping)
   offres_clean.parquet   → offres standardisées
   competences.parquet    → une ligne par offre × compétence
         │
+        ▼  [data_quality/validate_silver.py — Great Expectations]
+  PORTE QUALITÉ — bloque le passage en Gold si les règles échouent
+        │
         ▼  [gold_aggregation.py — DuckDB]
   GOLD — Parquet (tables analytiques)
   top_competences / salaires_par_profil /
@@ -183,6 +228,9 @@ JSON brut (scraping)
         │
         ▼
   Dashboard + Rapport analytique
+
+  Orchestration : Airflow (dags/mexora_pipeline_dag.py) — planification @daily,
+  retries automatiques, exécutable en local via `python main.py` ou en conteneurs via Docker Compose.
 ```
 
 ---
@@ -195,12 +243,18 @@ JSON brut (scraping)
 
 **Pourquoi DuckDB pour le Gold ?** Moteur SQL analytique in-process, sans serveur à démarrer. Lit les fichiers Parquet directement depuis le disque avec des performances proches d'un entrepôt de données. Idéal pour des analyses ad hoc sur des volumes <10 Go.
 
+**Pourquoi Great Expectations pour la qualité ?** Permet de déclarer les règles métier (unicité, plages de valeurs, valeurs autorisées) comme du code versionné plutôt que des vérifications ad hoc, et de bloquer explicitement la propagation de données corrompues vers Gold.
+
+**Pourquoi Airflow ?** Rend les dépendances entre étapes explicites (Gold ne se lance jamais avant que Silver et la validation qualité aient réussi), gère les retries automatiquement, et permet une planification récurrente (`@daily`) sans script cron maison.
+
+**Pourquoi Docker Compose ?** Isole l'environnement Airflow (webserver + scheduler + Postgres) du poste de développement, et rend le déploiement reproductible en une seule commande.
+
 ---
 
 ## Auteurs
 
 Projet réalisé par :
       EL-Moutouk Mohamed Yassir
-      
- 
-Mexora RH 
+
+
+Mexora RH
